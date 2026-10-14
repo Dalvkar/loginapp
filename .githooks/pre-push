@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+hook_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+repo_root="$(dirname "$hook_dir")"
+cd "$repo_root"
+
+echo "pre-push: ejecutando pruebas..."
+if npm test; then
+  exit 0
+fi
+
+echo "pre-push: se detecto una falla; aplicando reparaciones conocidas..."
+node scripts/repair-known-test-failure.mjs
+
+echo "pre-push: verificando la reparacion con toda la suite..."
+npm test
