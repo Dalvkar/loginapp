@@ -35,7 +35,7 @@ export function createApp({ store, config }: { store: AuthStore; config: AppConf
     handler: (_req, res) => res.status(429).json({ message: "Demasiados intentos. Inténtalo más tarde" }) });
   app.post("/api/auth/login", limiter, csrf, wrap(async (req, res) => {
     const parsed = loginSchema.safeParse(req.body);
-    if (!parsed.success) { res.status(400).json({ message: "Datos invalidos" }); return; }
+    if (!parsed.success) { res.status(400).json({ message: "Datos inválidos" }); return; }
     const user = await store.findUserByEmail(parsed.data.email);
     const matches = await bcrypt.compare(parsed.data.password, user?.passwordHash ?? DUMMY_HASH);
     if (!user || !user.isActive || !matches) { res.status(401).json({ message: "Credenciales inválidas" }); return; }
